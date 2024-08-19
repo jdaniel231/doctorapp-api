@@ -37,7 +37,31 @@ const registerController = async (req, res) => {
   }
 };
 
+const authController = async (req, res) => {
+  console.log("Request received at /getUserData with body:", req.body);
+  const { userId } = req.body;
+  try {
+    const user = await userModels.findUserById(userId);
+    if (!user) {
+      return res.status(404).send({ message: "User not found" });
+    } else {
+      return res.status(200).send({
+        success: true,
+        data: {
+          name: user.name,
+          email: user.email
+        }
+      });
+    }
+  } catch (error) {
+    console.error("Auth error:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
 module.exports = {
   login: loginController,
   register: registerController,
+  auth: authController,
 };
